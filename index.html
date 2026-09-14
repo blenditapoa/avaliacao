@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08152C">
+<title>Blend Hamburgueria — sua opinião</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--marinho:#08152C;--marinho-2:#0F2245;--marinho-3:#16305E;--laranja:#FF7A18;--laranja-claro:#FFA451;--creme:#FFF4E9;--fraco:#93A6C6}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{min-height:100%;background:var(--marinho);color:var(--creme);font-family:Archivo,system-ui,sans-serif;overflow-x:hidden;background-image:radial-gradient(120% 60% at 50% -10%, rgba(255,122,24,.22), transparent 60%);background-attachment:fixed}
+.tela-app{max-width:520px;margin:0 auto;padding:20px 20px calc(24px + env(safe-area-inset-bottom));min-height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.logo{height:46px;width:auto;display:block}
+.logo-txt{font-family:Anton,sans-serif;font-size:26px;line-height:.9;color:var(--laranja)}
+.logo-txt small{display:block;font-family:Archivo;font-size:9.5px;font-weight:600;letter-spacing:.42em;color:var(--fraco);margin-top:3px}
+.anonimo{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--fraco);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);padding:6px 10px;border-radius:999px;white-space:nowrap}
+.anonimo svg{width:11px;height:11px;fill:var(--fraco)}
+.prog{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin:16px 0 4px;overflow:hidden;opacity:0;transition:opacity .3s}
+.prog.on{opacity:1}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--laranja),var(--laranja-claro));border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.contador{font-size:11px;color:var(--fraco);letter-spacing:.08em;height:16px;margin-bottom:10px}
+.tela{display:none;flex:1;flex-direction:column}
+.tela.ativa{display:flex}
+.tela.entra{animation:desliza .38s cubic-bezier(.22,.9,.3,1) both}
+@keyframes desliza{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+.tela.entra-tras{animation:deslizaT .38s cubic-bezier(.22,.9,.3,1) both}
+@keyframes deslizaT{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+.sobe{animation:sobe .5s cubic-bezier(.22,.9,.3,1) both}
+@keyframes sobe{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.14s}.d3{animation-delay:.22s}.d4{animation-delay:.3s}.d5{animation-delay:.4s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+h1{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;line-height:1.16;font-size:clamp(29px,8.6vw,38px);letter-spacing:.01em}
+h2{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;line-height:1.16;font-size:clamp(25px,7.4vw,32px);margin-bottom:8px}
+.grupo{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--laranja);margin-bottom:10px}
+p.apoio{font-size:15px;line-height:1.5;color:var(--fraco);max-width:36ch}
+.abertura{justify-content:center}
+.pontos{list-style:none;margin:26px 0 0;display:flex;flex-direction:column;gap:14px}
+.pontos li{display:flex;gap:14px;align-items:center;font-size:16px;line-height:1.3}
+.pontos b{font-weight:600}
+.bolinha{width:26px;height:26px;flex:none;border-radius:8px;background:var(--marinho-3);display:flex;align-items:center;justify-content:center;font-size:13px}
+input,textarea{width:100%;background:var(--marinho-2);border:1.5px solid var(--marinho-3);border-radius:14px;padding:15px;color:var(--creme);font:400 16px Archivo,sans-serif;transition:border-color .2s}
+input:focus,textarea:focus{outline:none;border-color:var(--laranja)}
+textarea{min-height:130px;resize:vertical;line-height:1.5}
+label{display:block;font-size:12.5px;color:var(--fraco);margin-bottom:8px}
+.setores{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.setor{background:var(--marinho-2);border:1.5px solid var(--marinho-3);color:var(--fraco);border-radius:999px;padding:11px 16px;font:500 14px Archivo;cursor:pointer;transition:.18s}
+.setor.on{background:var(--laranja);border-color:var(--laranja);color:#0A1526;font-weight:600}
+.estrelas{display:flex;justify-content:space-between;gap:7px;margin:6px 0 0}
+.est{flex:1;aspect-ratio:1;background:var(--marinho-2);border:1.5px solid var(--marinho-3);border-radius:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .16s,background .2s,border-color .2s}
+.est svg{width:52%;height:52%;fill:#2C4576;transition:fill .2s}
+.est.on{background:rgba(255,122,24,.12);border-color:rgba(255,122,24,.5)}
+.est.on svg{fill:var(--laranja)}
+.est.pop{animation:pop .34s cubic-bezier(.3,1.4,.5,1)}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.16)}100%{transform:scale(1)}}
+.est:active{transform:scale(.94)}
+.extremos{display:flex;justify-content:space-between;font-size:11px;color:var(--fraco);margin-top:10px}
+.nota-txt{min-height:30px;font-family:Anton,sans-serif;font-size:22px;color:var(--laranja);margin-top:16px;text-transform:uppercase;opacity:0;transition:opacity .2s}
+.nota-txt.on{opacity:1}
+.rodape{margin-top:auto;padding-top:26px;display:flex;flex-direction:column;gap:10px}
+.btn{width:100%;border:none;border-radius:15px;padding:18px;font:600 16.5px Archivo,sans-serif;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:transform .15s,opacity .2s}
+.btn:active{transform:scale(.985)}
+.btn.pri{background:linear-gradient(135deg,var(--laranja),#F06400);color:#0A1526;box-shadow:0 10px 26px rgba(255,122,24,.28)}
+.btn.sec{background:transparent;color:var(--fraco);border:1.5px solid var(--marinho-3);font-weight:500;font-size:15px;padding:15px}
+.btn:disabled{opacity:.32;cursor:default;box-shadow:none}
+.voltar{background:none;border:none;color:var(--fraco);font:500 14px Archivo;cursor:pointer;padding:6px 2px;align-self:flex-start;margin-bottom:14px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--laranja);outline-offset:3px}
+.final{justify-content:center;text-align:center;align-items:center}
+.final p.apoio{margin:0 auto}
+.selo-fim{width:88px;height:88px;border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:42px;margin-bottom:24px;animation:selo .6s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes selo{from{opacity:0;transform:scale(.5) rotate(-12deg)}to{opacity:1;transform:none}}
+.selo-fim.bom{background:linear-gradient(140deg,var(--laranja),#E85D00);box-shadow:0 16px 40px rgba(255,122,24,.36)}
+.selo-fim.neutro{background:var(--marinho-3)}
+.apelo{background:rgba(255,122,24,.1);border:1px solid rgba(255,122,24,.32);border-radius:16px;padding:18px;margin-top:22px;font-size:15px;line-height:1.5;text-align:left}
+.apelo b{color:var(--laranja)}
+.pulsa{animation:pulsa 1.9s ease-in-out infinite}
+@keyframes pulsa{0%,100%{box-shadow:0 10px 26px rgba(255,122,24,.28)}50%{box-shadow:0 10px 34px rgba(255,122,24,.55)}}
+.rodape-nota{font-size:11.5px;color:var(--fraco);line-height:1.5;margin-top:18px;text-align:center}
+.aviso{background:rgba(255,255,255,.05);border-radius:10px;padding:11px 13px;font-size:12.5px;color:var(--fraco);margin-bottom:14px;display:none}
+</style>
+</head>
+<body>
+<div class="tela-app">
+<header>
+  <img class="logo" src="logo.png" alt="Blend Hamburgueria" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'logo-txt',innerHTML:'BLEND<small>HAMBURGUERIA</small>'}))">
+  <div class="anonimo">
+    <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-1V6a5 5 0 00-5-5zm0 2a3 3 0 013 3v3H9V6a3 3 0 013-3z"/></svg>
+    100% anônimo
+  </div>
+</header>
+<div class="prog" id="prog"><i id="progBar"></i></div>
+<div class="contador" id="contador"></div>
+<section class="tela ativa abertura" id="t-abre">
+  <h1 class="sobe d1">Sua opinião<br>muda o próximo<br>hambúrguer</h1>
+  <p class="apoio sobe d2" style="margin-top:16px">Leva menos de um minuto.</p>
+  <ul class="pontos">
+    <li class="sobe d3"><div class="bolinha">⏱️</div><b>Rápido de verdade</b></li>
+    <li class="sobe d4"><div class="bolinha">🔒</div><b>Totalmente anônimo</b></li>
+    <li class="sobe d5"><div class="bolinha">🔧</div><b>Vira correção</b></li>
+  </ul>
+  <div class="rodape"><button class="btn pri sobe d5" id="btnComecar">Começar</button></div>
+</section>
+<section class="tela" id="t-atendente">
+  <div class="grupo">Antes de começar</div>
+  <h2>Quem te atendeu hoje?</h2>
+  <p class="apoio" style="margin-bottom:24px">Se lembrar o nome, escreve. É assim que a gente reconhece quem está fazendo bonito — e o nome não vai junto com nenhum dado seu.</p>
+  <label for="setor">Onde você foi atendido</label>
+  <div class="setores" id="setores"></div>
+  <label for="atendente">Nome do atendente</label>
+  <input id="atendente" placeholder="Ex.: Ana, Bruno, Carla..." autocomplete="off" list="sugestoes">
+  <datalist id="sugestoes"></datalist>
+  <div class="rodape">
+    <button class="btn pri" id="btnAtend">Continuar</button>
+    <button class="btn sec" id="btnPular">Não lembro o nome</button>
+  </div>
+</section>
+<section class="tela" id="t-pergunta">
+  <button class="voltar" id="btnVoltar">← Voltar</button>
+  <div class="grupo" id="pGrupo"></div>
+  <h2 id="pTitulo"></h2>
+  <p class="apoio" id="pApoio" style="margin-bottom:26px"></p>
+  <div class="estrelas" id="pEstrelas"></div>
+  <div class="extremos"><span>Muito ruim</span><span>Excelente</span></div>
+  <div class="nota-txt" id="pNota"></div>
+  <div class="rodape"><p class="rodape-nota">Toque na estrela e a próxima pergunta abre sozinha.</p></div>
+</section>
+<section class="tela" id="t-comentario">
+  <button class="voltar" id="btnVoltar2">← Voltar</button>
+  <div class="grupo">Última etapa</div>
+  <h2>Conta pra gente<br>com suas palavras</h2>
+  <p class="apoio" style="margin-bottom:20px">Sugestão de melhoria, sabor novo que você queria ver no cardápio, ou algo que foi tão bom que merece elogio. Escreva à vontade — ninguém sabe quem escreveu.</p>
+  <textarea id="comentario" placeholder="Ex.: adorei o cheddar, mas queria uma opção sem lactose. A espera na sexta foi longa..."></textarea>
+  <div class="rodape">
+    <button class="btn pri" id="btnEnviar">Enviar avaliação</button>
+    <p class="rodape-nota">Ao enviar, a resposta é usada internamente para melhorias. Nenhum dado pessoal é coletado.</p>
+  </div>
+</section>
+<section class="tela final" id="t-fim">
+  <div class="aviso" id="avisoOffline"></div>
+  <div class="selo-fim" id="seloFim"></div>
+  <h2 id="fimTitulo"></h2>
+  <p class="apoio" id="fimTexto"></p>
+  <div id="blocoGoogle" style="width:100%;display:none">
+    <div class="apelo"><b>Sua ajuda é muito importante — nos avalie no Google!</b><br>Leva 20 segundos e é o que faz gente nova descobrir a Blend. Se a aba não abriu sozinha, é só tocar no botão.</div>
+  </div>
+  <div class="rodape" style="width:100%">
+    <a class="btn pri pulsa" id="btnGoogle" target="_blank" rel="noopener" style="display:none">Avaliar no Google agora</a>
+    <p class="rodape-nota" id="fimRodape"></p>
+  </div>
+</section>
+</div>
+<script>
+const CFG = {
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxPl4DssYXZklHwa7r4m84KDlNQsfNcMU-tQtOULWOmrpob3Ho1crWO5UNLATvQL-we/exec",
+  GOOGLE_REVIEW_URL: "https://search.google.com/local/writereview?placeid=ChIJB8sz41pW2ZQRtpmO-ioqy3g",
+  LIMIAR_GOOGLE: 4.5,
+  SETORES: ["Salão", "Balcão"],
+  SETORES_SEM_COMIDA: ["Balcão"],
+  NOMES_SUGERIDOS: [],
+  BLOQUEIO_HORAS: 3
+};
+const PERGUNTAS = [
+  {g:"Atendimento", t:"Como foi a recepção?", a:"O jeito que você foi recebido ao chegar.", c:"recepcao"},
+  {g:"Ambiente", t:"E as instalações?", a:"Limpeza, mesas, banheiro, conforto do espaço.", c:"instalacoes"},
+  {g:"Atendimento", t:"Explicaram bem<br>como funciona?", a:"Cardápio, forma de pedir, tempo de espera.", c:"explicacao"},
+  {g:"Cardápio", t:"O que achou<br>do cardápio?", a:"Variedade e opções disponíveis.", c:"cardapio"},
+  {g:"Cardápio", t:"E os valores?", a:"O preço fez sentido pelo que você recebeu.", c:"valores"},
+  {g:"Comida", t:"E a comida<br>no geral?", a:"A impressão geral do que você comeu.", c:"comida"},
+  {g:"Comida", t:"Como veio<br>a apresentação?", a:"Montagem, aparência, capricho no prato.", c:"apresentacao"},
+  {g:"Comida", t:"E o sabor?", a:"O ponto da carne, o tempero, o equilíbrio do lanche.", c:"sabor"}
+];
+const LEG = ["", "Muito ruim", "Ruim", "Regular", "Bom", "Excelente"];
+PERGUNTAS.forEach(p => { if (p.g === "Comida") p.comeu = true; });
+let PERGUNTAS_ATIVAS = PERGUNTAS;
+const $ = s => document.querySelector(s);
+const resp = { mesa: new URLSearchParams(location.search).get("mesa") || "", setor: "", atendente: "", notas: {}, comentario: "" };
+let idx = 0;
+function mostra(id, tras){
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa","entra","entra-tras"));
+  const el = document.getElementById(id);
+  el.classList.add("ativa", tras ? "entra-tras" : "entra");
+  window.scrollTo(0,0);
+}
+function progresso(n){
+  $("#prog").classList.toggle("on", n > 0);
+  $("#progBar").style.width = (n / PERGUNTAS_ATIVAS.length * 100) + "%";
+}
+$("#btnComecar").onclick = () => { montaSetores(); mostra("t-atendente"); };
+function montaSetores(){
+  const c = $("#setores");
+  if(c.children.length) return;
+  CFG.SETORES.forEach(s => {
+    const b = document.createElement("button");
+    b.className = "setor"; b.type = "button"; b.textContent = s;
+    b.onclick = () => {
+      c.querySelectorAll(".setor").forEach(x => x.classList.remove("on"));
+      b.classList.add("on"); resp.setor = s;
+    };
+    c.appendChild(b);
+  });
+  $("#sugestoes").innerHTML = CFG.NOMES_SUGERIDOS.map(n => '<option value="' + n + '">').join("");
+}
+$("#btnAtend").onclick = () => { resp.atendente = $("#atendente").value.trim(); iniciaPerguntas(); };
+$("#btnPular").onclick = () => { resp.atendente = ""; iniciaPerguntas(); };
+function iniciaPerguntas(){
+  const semComida = (CFG.SETORES_SEM_COMIDA || []).indexOf(resp.setor) >= 0;
+  PERGUNTAS_ATIVAS = semComida ? PERGUNTAS.filter(p => !p.comeu) : PERGUNTAS;
+  idx = 0; renderPergunta(); mostra("t-pergunta");
+}
+function renderPergunta(tras){
+  const p = PERGUNTAS_ATIVAS[idx];
+  $("#pGrupo").textContent = p.g;
+  $("#pTitulo").innerHTML = p.t;
+  $("#pApoio").textContent = p.a;
+  $("#pNota").classList.remove("on");
+  progresso(idx + 1);
+  const cx = $("#pEstrelas"); cx.innerHTML = "";
+  const atual = resp.notas[p.c] || 0;
+  for(let i = 1; i <= 5; i++){
+    const b = document.createElement("button");
+    b.className = "est" + (i <= atual ? " on" : "");
+    b.type = "button"; b.setAttribute("aria-label", i + " de 5 estrelas");
+    b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2.2l2.95 6.36 6.95.82-5.15 4.75L18.1 21 12 17.5 5.9 21l1.35-6.87L2.1 9.38l6.95-.82z"/></svg>';
+    b.onclick = () => escolhe(i, cx, p);
+    cx.appendChild(b);
+  }
+  if(atual){ $("#pNota").textContent = LEG[atual]; $("#pNota").classList.add("on"); }
+  $("#btnVoltar").style.visibility = idx === 0 ? "hidden" : "visible";
+}
+function escolhe(n, cx, p){
+  resp.notas[p.c] = n;
+  [...cx.children].forEach((e, j) => {
+    e.classList.toggle("on", j < n);
+    if(j === n - 1){ e.classList.remove("pop"); void e.offsetWidth; e.classList.add("pop"); }
+  });
+  $("#pNota").textContent = LEG[n];
+  $("#pNota").classList.add("on");
+  if(navigator.vibrate) navigator.vibrate(12);
+  setTimeout(() => {
+    if(idx < PERGUNTAS_ATIVAS.length - 1){ idx++; renderPergunta(); mostra("t-pergunta"); }
+    else { progresso(PERGUNTAS_ATIVAS.length); mostra("t-comentario"); }
+  }, 430);
+}
+$("#btnVoltar").onclick = () => { if(idx > 0){ idx--; renderPergunta(true); mostra("t-pergunta", true); } };
+$("#btnVoltar2").onclick = () => { idx = PERGUNTAS_ATIVAS.length - 1; renderPergunta(true); mostra("t-pergunta", true); };
+$("#btnEnviar").onclick = function(){
+  resp.comentario = $("#comentario").value.trim();
+  const vals = PERGUNTAS_ATIVAS.map(p => resp.notas[p.c] || 0).filter(Boolean);
+  const media = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  const excelente = media >= CFG.LIMIAR_GOOGLE;
+  if(excelente) window.open(CFG.GOOGLE_REVIEW_URL, "_blank");
+  this.disabled = true; this.textContent = "Enviando...";
+  salvar(media);
+  finalizar(media, excelente);
+};
+function salvar(media){
+  const linha = { data: new Date().toISOString(), mesa: resp.mesa, setor: resp.setor, atendente: resp.atendente, media: media.toFixed(2), comentario: resp.comentario };
+  PERGUNTAS.forEach(p => linha[p.c] = resp.notas[p.c] || "");
+  const fila = lerFila();
+  fila.push(linha);
+  gravarFila(fila);
+  enviarFila(fila);
+}
+function lerFila(){ try{ return JSON.parse(localStorage.getItem("blend_fila") || "[]"); }catch(e){ return []; } }
+function gravarFila(f){ try{ localStorage.setItem("blend_fila", JSON.stringify(f)); }catch(e){} }
+async function enviarFila(fila){
+  if(!fila) fila = lerFila();
+  if(!fila.length) return;
+  const sobra = [];
+  for(const l of fila){
+    try{
+      await fetch(CFG.APPS_SCRIPT_URL, { method: "POST", mode: "no-cors", redirect: "follow", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(l) });
+    }catch(e){ sobra.push(l); }
+  }
+  gravarFila(sobra);
+  if(sobra.length){
+    const a = $("#avisoOffline");
+    a.style.display = "block";
+    a.textContent = "Sua resposta ficou guardada neste aparelho e sobe assim que a internet voltar.";
+  }
+}
+function finalizar(media, excelente){
+  try{ localStorage.setItem("blend_ultima", Date.now()); }catch(e){}
+  progresso(0);
+  $("#prog").classList.remove("on");
+  if(excelente){
+    $("#seloFim").className = "selo-fim bom"; $("#seloFim").textContent = "🔥";
+    $("#fimTitulo").textContent = "Que bom ler isso!";
+    $("#fimTexto").textContent = "Sua avaliação foi registrada. Já que a experiência foi boa, tem mais uma coisa que ajuda demais a Blend:";
+    $("#blocoGoogle").style.display = "block";
+    $("#btnGoogle").style.display = "block";
+    $("#btnGoogle").href = CFG.GOOGLE_REVIEW_URL;
+    $("#fimRodape").textContent = "Sua avaliação interna continua anônima. A do Google é pública e feita por você, na sua conta.";
+  } else {
+    $("#seloFim").className = "selo-fim neutro"; $("#seloFim").textContent = "📝";
+    $("#fimTitulo").textContent = "Recebido. Obrigado pela sinceridade";
+    $("#fimTexto").textContent = "Sua resposta entrou anônima na nossa base de melhorias e vai ser lida na reunião desta semana. É exatamente esse retorno que faz a casa mudar.";
+    $("#fimRodape").textContent = "Nenhum dado pessoal foi coletado nesta avaliação.";
+  }
+  mostra("t-fim");
+}
+(function(){
+  enviarFila();
+  let ult = 0;
+  try{ ult = +localStorage.getItem("blend_ultima") || 0; }catch(e){}
+  if(Date.now() - ult < CFG.BLOQUEIO_HORAS * 3600000){
+    $("#seloFim").className = "selo-fim neutro"; $("#seloFim").textContent = "✅";
+    $("#fimTitulo").textContent = "Você já avaliou hoje";
+    $("#fimTexto").textContent = "Obrigado! Uma resposta por visita mantém nossos números honestos. Na próxima vinda a gente pergunta de novo.";
+    mostra("t-fim");
+  }
+})();
+</script>
+</body>
+</html>
