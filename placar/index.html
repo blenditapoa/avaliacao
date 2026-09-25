@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08152C">
+<title>Painel de Avaliações — Blend Hamburgueria</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--marinho:#08152C;--m2:#0F2245;--m3:#16305E;--laranja:#FF7A18;--creme:#FFF4E9;--fraco:#93A6C6;--ruim:#E4453A;--bom:#3FAE6A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--marinho);color:var(--creme);font-family:Archivo,system-ui,sans-serif;padding:22px 18px 70px;max-width:820px;margin:0 auto;background-image:radial-gradient(110% 40% at 50% -8%,rgba(255,122,24,.16),transparent 60%);background-attachment:fixed}
+.marca{font-family:Anton,sans-serif;font-size:22px;color:var(--laranja);line-height:.9}
+.marca small{display:block;font-family:Archivo;font-size:9px;font-weight:600;letter-spacing:.4em;color:var(--fraco);margin-top:3px}
+h1{font-family:Anton,sans-serif;font-weight:400;font-size:30px;text-transform:uppercase;margin:18px 0 3px;line-height:1.1}
+.sub{color:var(--fraco);font-size:13.5px;margin-bottom:20px}
+.abas{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap}
+.aba{background:var(--m2);border:1px solid var(--m3);color:var(--fraco);padding:10px 15px;border-radius:10px;font:500 14px Archivo;cursor:pointer}
+.aba.on{background:var(--laranja);border-color:var(--laranja);color:#0A1526;font-weight:600}
+.vista{display:none}.vista.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.kpi{background:var(--m2);border:1px solid var(--m3);border-radius:14px;padding:15px}
+.kpi b{display:block;font-family:Anton,sans-serif;font-size:28px;font-weight:400;line-height:1;color:var(--laranja)}
+.kpi span{font-size:11.5px;color:var(--fraco);display:block;margin-top:5px;line-height:1.3}
+.tit{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--laranja);margin:26px 0 12px}
+.crit{margin-bottom:14px}
+.crit-topo{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+.crit-topo span{font-family:Anton,sans-serif;font-size:17px}
+.trilho{height:7px;background:var(--m2);border-radius:4px;overflow:hidden}
+.trilho i{display:block;height:100%;border-radius:4px}
+.linha{display:flex;align-items:center;gap:14px;background:var(--m2);border:1px solid var(--m3);border-radius:13px;padding:14px 16px;margin-bottom:8px}
+.pos{font-family:Anton,sans-serif;font-size:20px;color:var(--laranja);min-width:26px}
+.nome{flex:1;font-weight:600;font-size:15.5px}
+.det{display:block;font-size:12px;color:var(--fraco);font-weight:400;margin-top:3px}
+.med{font-family:Anton,sans-serif;font-size:22px}
+.card{background:var(--m2);border:1px solid var(--m3);border-radius:13px;padding:15px;margin-bottom:9px;font-size:14.5px;line-height:1.5}
+.card.neg{border-left:3px solid var(--ruim)}
+.card.pos{border-left:3px solid var(--bom)}
+.meta-c{font-size:11.5px;color:var(--fraco);margin-bottom:7px}
+.vazio{color:var(--fraco);font-size:14px;padding:36px 0;text-align:center}
+input{background:var(--m2);border:1.5px solid var(--m3);border-radius:11px;padding:13px;color:var(--creme);font:400 15px Archivo;width:100%;margin-bottom:10px}
+label{font-size:12.5px;color:var(--fraco);display:block;margin-bottom:6px}
+.btn{background:linear-gradient(135deg,var(--laranja),#F06400);color:#0A1526;border:none;border-radius:12px;padding:15px;font:600 16px Archivo;cursor:pointer;width:100%}
+.qrs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:20px}
+.qr{background:#fff;border-radius:14px;padding:14px;text-align:center;color:#08152C}
+.qr img{width:100%;display:block}
+.qr b{font-family:Anton,sans-serif;font-size:17px;display:block;margin-top:8px}
+.qr span{font-size:10.5px;color:#5a6a80;display:block;margin-top:2px}
+@media print{body{background:#fff;color:#000}.abas,.marca,h1,.sub,.btn,input,label{display:none}.qr{break-inside:avoid;border:1px solid #ddd}}
+</style>
+</head>
+<body>
+<div class="marca">BLEND<small>HAMBURGUERIA</small></div>
+<h1>Painel de avaliações</h1>
+<p class="sub" id="periodo"></p>
+<div class="abas">
+  <button class="aba on" data-v="geral">Visão do mês</button>
+  <button class="aba" data-v="equipe">Equipe</button>
+  <button class="aba" data-v="feed">Comentários</button>
+  <button class="aba" data-v="qr">QR das mesas</button>
+</div>
+<div class="vista on" id="v-geral">
+  <div class="kpis">
+    <div class="kpi"><b id="k1">—</b><span>avaliações no mês</span></div>
+    <div class="kpi"><b id="k2">—</b><span>média geral</span></div>
+    <div class="kpi"><b id="k3">—</b><span>% que foram ao Google</span></div>
+  </div>
+  <div class="tit">Nota por critério</div>
+  <div id="criterios"><div class="vazio">Carregando...</div></div>
+</div>
+<div class="vista" id="v-equipe">
+  <div class="tit">Por atendente</div><div id="rankPessoas"></div>
+  <div class="tit">Por setor</div><div id="rankSetor"></div>
+</div>
+<div class="vista" id="v-feed"><div id="feed"></div></div>
+<div class="vista" id="v-qr">
+  <label>Endereço da página de avaliação</label>
+  <input id="urlBase" value="https://blenditapoa.github.io/avaliacao/">
+  <label>Quantas mesas</label>
+  <input id="qtdMesas" type="number" value="12" min="1" max="60">
+  <button class="btn" onclick="geraQR()">Gerar QR das mesas</button>
+  <div class="qrs" id="qrs"></div>
+</div>
+<script>
+const URL_API = "https://script.google.com/macros/s/AKfycbxPl4DssYXZklHwa7r4m84KDlNQsfNcMU-tQtOULWOmrpob3Ho1crWO5UNLATvQL-we/exec";
+const LIMIAR = 4.5;
+const CRITERIOS = [["recepcao","Recepção do atendente"],["instalacoes","Instalações"],["explicacao","Explicação do cardápio e pedidos"],["cardapio","O cardápio"],["valores","Valores"],["comida","A comida"],["apresentacao","Apresentação da comida"],["sabor","Sabor da comida"]];
+const DE_ATEND = ["recepcao","explicacao"];
+const DE_COZINHA = ["comida","apresentacao","sabor"];
+document.querySelectorAll(".aba").forEach(a => a.onclick = () => {
+  document.querySelectorAll(".aba").forEach(x => x.classList.remove("on"));
+  document.querySelectorAll(".vista").forEach(x => x.classList.remove("on"));
+  a.classList.add("on"); document.getElementById("v-" + a.dataset.v).classList.add("on");
+});
+const agora = new Date();
+document.getElementById("periodo").textContent = agora.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+const cor = n => n >= 4.5 ? "var(--bom)" : n >= 3.5 ? "var(--laranja)" : "var(--ruim)";
+const medDe = (arr, campos) => { let s=0,q=0; arr.forEach(l=>campos.forEach(c=>{const v=+l[c]; if(v){s+=v;q++;}})); return q ? s/q : 0; };
+const pad = n => { n = String(n||"").trim().toLowerCase(); return n ? n.charAt(0).toUpperCase()+n.slice(1) : ""; };
+async function carrega(){
+  try {
+    const r = await fetch(URL_API + "?acao=listar", {redirect:"follow"});
+    render(await r.json());
+  } catch(e) {
+    document.getElementById("criterios").innerHTML = '<div class="vazio">Não consegui ler a planilha agora. Recarregue a página.</div>';
+  }
+}
+function render(linhas){
+  const d = linhas.filter(l => { const dt = new Date(l.data); return dt.getMonth()===agora.getMonth() && dt.getFullYear()===agora.getFullYear(); });
+  document.getElementById("k1").textContent = d.length;
+  const geral = medDe(d, CRITERIOS.map(c=>c[0]));
+  document.getElementById("k2").textContent = geral ? geral.toFixed(1) : "—";
+  const exc = d.filter(l => +l.media >= LIMIAR).length;
+  document.getElementById("k3").textContent = d.length ? Math.round(exc/d.length*100) + "%" : "—";
+  document.getElementById("criterios").innerHTML = d.length ? CRITERIOS.map(([c,rot]) => {
+    const m = medDe(d,[c]);
+    return '<div class="crit"><div class="crit-topo"><b>'+rot+'</b><span style="color:'+cor(m)+'">'+m.toFixed(1)+'</span></div><div class="trilho"><i style="width:'+(m/5*100)+'%;background:'+cor(m)+'"></i></div></div>';
+  }).join("") : '<div class="vazio">Nenhuma avaliação neste mês ainda.</div>';
+  const porNome = {};
+  d.forEach(l => { const n = pad(l.atendente); if(n) (porNome[n]=porNome[n]||[]).push(l); });
+  const lista = Object.entries(porNome).map(([n,arr])=>({n,q:arr.length,m:medDe(arr,DE_ATEND)})).sort((a,b)=>b.m-a.m||b.q-a.q);
+  document.getElementById("rankPessoas").innerHTML = lista.length ? lista.map((x,i)=>'<div class="linha"><div class="pos">'+(i+1)+'</div><div class="nome">'+x.n+'<span class="det">'+x.q+' avaliações · recepção e explicação</span></div><div class="med" style="color:'+cor(x.m)+'">'+x.m.toFixed(1)+'</div></div>').join("") : '<div class="vazio">Ninguém foi citado pelo nome ainda.</div>';
+  const porSetor = {};
+  d.forEach(l => { const s = l.setor || "Não informado"; (porSetor[s]=porSetor[s]||[]).push(l); });
+  let h = Object.entries(porSetor).map(([s,arr])=>({s,q:arr.length,m:medDe(arr,DE_ATEND)})).sort((a,b)=>b.m-a.m).map((x,i)=>'<div class="linha"><div class="pos">'+(i+1)+'</div><div class="nome">'+x.s+'<span class="det">'+x.q+' avaliações</span></div><div class="med" style="color:'+cor(x.m)+'">'+x.m.toFixed(1)+'</div></div>').join("");
+  const mc = medDe(d, DE_COZINHA);
+  if(d.length) h += '<div class="linha" style="margin-top:14px"><div class="pos">🍳</div><div class="nome">Cozinha<span class="det">comida, apresentação e sabor</span></div><div class="med" style="color:'+cor(mc)+'">'+mc.toFixed(1)+'</div></div>';
+  document.getElementById("rankSetor").innerHTML = h || '<div class="vazio">Sem dados.</div>';
+  const com = d.filter(l => String(l.comentario||"").trim()).sort((a,b)=>new Date(b.data)-new Date(a.data));
+  document.getElementById("feed").innerHTML = com.length ? com.map(l=>'<div class="card '+(+l.media>=4?"pos":"neg")+'"><div class="meta-c">'+new Date(l.data).toLocaleString("pt-BR")+(l.mesa?" · Mesa "+l.mesa:"")+(l.setor?" · "+l.setor:"")+(l.atendente?" · "+pad(l.atendente):"")+' · média '+(+l.media).toFixed(1)+'</div>'+l.comentario+'</div>').join("") : '<div class="vazio">Nenhum comentário escrito ainda.</div>';
+}
+function geraQR(){
+  const base = document.getElementById("urlBase").value.trim();
+  const qtd = +document.getElementById("qtdMesas").value;
+  if(!base) return;
+  let h = "";
+  for(let i=1;i<=qtd;i++){
+    const alvo = base + (base.includes("?") ? "&" : "?") + "mesa=" + i;
+    h += '<div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&data='+encodeURIComponent(alvo)+'" alt="QR mesa '+i+'"><b>Mesa '+i+'</b><span>Avalie em 1 minuto — é anônimo</span></div>';
+  }
+  document.getElementById("qrs").innerHTML = h;
+}
+carrega();
+</script>
+</body>
+  </html>
